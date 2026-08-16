@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Website Time Tracker</title>
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="icon" href="icons/icon32.png" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <img src="icons/icon48.png" alt="" width="32" height="32" />
+          <div>
+            <h1>Website Time Tracker</h1>
+            <p>Local-only browsing time, grouped by domain</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button id="btn-export-json" type="button" class="ghost">Export JSON</button>
+          <button id="btn-export-csv" type="button" class="ghost">Export CSV</button>
+          <button id="btn-settings" type="button">Settings</button>
+        </div>
+      </header>
+
+      <nav class="filters" aria-label="Time range">
+        <div class="pills" role="tablist">
+          <button type="button" class="pill active" data-range="today">Today</button>
+          <button type="button" class="pill" data-range="7">Last 7 days</button>
+          <button type="button" class="pill" data-range="30">Last 30 days</button>
+          <button type="button" class="pill" data-range="all">All time</button>
+          <button type="button" class="pill" data-range="custom">Custom</button>
+        </div>
+        <div id="custom-range" class="custom-range hidden">
+          <label>From <input id="from-date" type="date" /></label>
+          <label>To <input id="to-date" type="date" /></label>
+          <button id="apply-custom" type="button" class="ghost">Apply</button>
+        </div>
+      </nav>
+
+      <section class="stats" id="stats"></section>
+
+      <section class="charts">
+        <article class="card chart-card">
+          <header>
+            <h2>Hours by site</h2>
+            <p>Top 10 domains, remainder grouped as Other</p>
+          </header>
+          <div class="chart-frame">
+            <canvas id="bar-chart"></canvas>
+          </div>
+        </article>
+        <article class="card chart-card">
+          <header>
+            <h2>Share of time</h2>
+            <p>Sites under 1% are grouped into Other</p>
+          </header>
+          <div class="chart-frame pie-frame">
+            <canvas id="pie-chart"></canvas>
+          </div>
+        </article>
+        <article class="card chart-card wide">
+          <header>
+            <h2>Daily trend</h2>
+            <p>Total browsing hours per day in this range</p>
+          </header>
+          <div class="chart-frame">
+            <canvas id="line-chart"></canvas>
+          </div>
+        </article>
+      </section>
+
+      <section class="card table-card">
+        <header class="table-head">
+          <div>
+            <h2>All sites</h2>
+            <p id="table-meta">Sorted by time</p>
+          </div>
+          <input id="search" type="search" placeholder="Filter domains…" autocomplete="off" />
+        </header>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th><button type="button" data-sort="domain">Domain</button></th>
+                <th class="num"><button type="button" data-sort="seconds">Time</button></th>
+                <th class="num"><button type="button" data-sort="hours">Hours</button></th>
+                <th class="num"><button type="button" data-sort="share">Share</button></th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <aside id="settings-panel" class="drawer hidden" aria-hidden="true">
+      <div class="drawer-backdrop" data-close></div>
+      <div class="drawer-sheet" role="dialog" aria-labelledby="settings-title">
+        <header>
+          <h2 id="settings-title">Settings</h2>
+          <button type="button" class="icon-btn" data-close aria-label="Close">×</button>
+        </header>
+
+        <label class="toggle">
+          <input id="tracking-enabled" type="checkbox" />
+          <span>Enable tracking</span>
+        </label>
+        <p class="hint">When off, no new time is recorded. Existing data stays put.</p>
+
+        <label class="field">
+          Idle after (seconds)
+          <input id="idle-threshold" type="number" min="15" max="300" step="15" />
+        </label>
+
+        <label class="field">
+          Keep data for (days)
+          <input id="retention-days" type="number" min="7" max="3650" step="1" />
+        </label>
+
+        <div class="field">
+          <span>Excluded domains</span>
+          <form id="exclude-form" class="exclude-row">
+            <input id="exclude-input" type="text" placeholder="example.com" />
+            <button type="submit" class="ghost">Add</button>
+          </form>
+          <ul id="exclude-list" class="exclude-list"></ul>
+        </div>
+
+        <div class="danger-zone">
+          <h3>Danger zone</h3>
+          <p>Permanently delete every stored day and domain. This cannot be undone.</p>
+          <button id="clear-data" type="button" class="danger">Clear all data</button>
+        </div>
+      </div>
+    </aside>
+
+    <script src="lib/chart.min.js"></script>
+    <script type="module" src="dashboard.js"></script>
+  </body>
+</html>
